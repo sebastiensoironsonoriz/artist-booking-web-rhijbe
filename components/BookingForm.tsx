@@ -1,9 +1,8 @@
 
 import React, { useState } from 'react';
-import { Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Platform } from 'react-native';
 import { Artist } from '../data/artistsData';
 
 interface BookingFormProps {
@@ -103,151 +102,194 @@ export default function BookingForm({ artist, onClose }: BookingFormProps) {
   };
 
   return (
-    <ScrollView style={{ maxHeight: '80%' }} showsVerticalScrollIndicator={false}>
-      <View style={{ padding: 20 }}>
-        <Text style={[commonStyles.title, { textAlign: 'center', marginBottom: 8 }]}>
-          Réserver {artist.name}
-        </Text>
-        <Text style={[commonStyles.textSecondary, { textAlign: 'center', marginBottom: 24 }]}>
-          Vérification de disponibilité gratuite
-        </Text>
-
-        {/* Client Information */}
-        <View style={{ marginBottom: 20 }}>
-          <Text style={[commonStyles.subtitle, { marginBottom: 16 }]}>
-            Vos informations
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
+      <ScrollView 
+        style={{ flex: 1 }} 
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={{ padding: 20 }}>
+          <Text style={[commonStyles.title, { textAlign: 'center', marginBottom: 8 }]}>
+            Réserver {artist.name}
           </Text>
-          
-          <Text style={commonStyles.inputLabel}>Nom complet *</Text>
-          <TextInput
-            style={[commonStyles.input, { marginBottom: 16 }]}
-            value={clientName}
-            onChangeText={setClientName}
-            placeholder="Votre nom et prénom"
-            placeholderTextColor={colors.textSecondary}
-          />
-
-          <Text style={commonStyles.inputLabel}>Email *</Text>
-          <TextInput
-            style={[commonStyles.input, { marginBottom: 16 }]}
-            value={clientEmail}
-            onChangeText={setClientEmail}
-            placeholder="votre@email.com"
-            placeholderTextColor={colors.textSecondary}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <Text style={commonStyles.inputLabel}>Téléphone *</Text>
-          <TextInput
-            style={[commonStyles.input, { marginBottom: 16 }]}
-            value={clientPhone}
-            onChangeText={setClientPhone}
-            placeholder="06 12 34 56 78"
-            placeholderTextColor={colors.textSecondary}
-            keyboardType="phone-pad"
-          />
-        </View>
-
-        {/* Event Information */}
-        <View style={{ marginBottom: 20 }}>
-          <Text style={[commonStyles.subtitle, { marginBottom: 16 }]}>
-            Détails de l&apos;événement
+          <Text style={[commonStyles.textSecondary, { textAlign: 'center', marginBottom: 24 }]}>
+            Vérification de disponibilité gratuite
           </Text>
 
-          <Text style={commonStyles.inputLabel}>Date de l&apos;événement *</Text>
+          {/* Client Information */}
+          <View style={{ marginBottom: 20 }}>
+            <Text style={[commonStyles.subtitle, { marginBottom: 16 }]}>
+              Vos informations
+            </Text>
+            
+            <Text style={commonStyles.inputLabel}>Nom complet *</Text>
+            <TextInput
+              style={[commonStyles.input, { marginBottom: 16 }]}
+              value={clientName}
+              onChangeText={setClientName}
+              placeholder="Votre nom et prénom"
+              placeholderTextColor={colors.textSecondary}
+              returnKeyType="next"
+            />
+
+            <Text style={commonStyles.inputLabel}>Email *</Text>
+            <TextInput
+              style={[commonStyles.input, { marginBottom: 16 }]}
+              value={clientEmail}
+              onChangeText={setClientEmail}
+              placeholder="votre@email.com"
+              placeholderTextColor={colors.textSecondary}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              returnKeyType="next"
+            />
+
+            <Text style={commonStyles.inputLabel}>Téléphone *</Text>
+            <TextInput
+              style={[commonStyles.input, { marginBottom: 16 }]}
+              value={clientPhone}
+              onChangeText={setClientPhone}
+              placeholder="06 12 34 56 78"
+              placeholderTextColor={colors.textSecondary}
+              keyboardType="phone-pad"
+              returnKeyType="next"
+            />
+          </View>
+
+          {/* Event Information */}
+          <View style={{ marginBottom: 20 }}>
+            <Text style={[commonStyles.subtitle, { marginBottom: 16 }]}>
+              Détails de l&apos;événement
+            </Text>
+
+            <Text style={commonStyles.inputLabel}>Date de l&apos;événement *</Text>
+            <TouchableOpacity
+              style={[commonStyles.input, { marginBottom: 16, justifyContent: 'center' }]}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text style={{ color: colors.text, fontSize: 16 }}>
+                {formatDate(eventDate)}
+              </Text>
+            </TouchableOpacity>
+
+            <Text style={commonStyles.inputLabel}>Heure de début *</Text>
+            <TouchableOpacity
+              style={[commonStyles.input, { marginBottom: 16, justifyContent: 'center' }]}
+              onPress={() => setShowTimePicker(true)}
+            >
+              <Text style={{ color: colors.text, fontSize: 16 }}>
+                {formatTime(eventTime)}
+              </Text>
+            </TouchableOpacity>
+
+            <Text style={commonStyles.inputLabel}>Lieu de l&apos;événement *</Text>
+            <TextInput
+              style={[commonStyles.input, { marginBottom: 16 }]}
+              value={eventLocation}
+              onChangeText={setEventLocation}
+              placeholder="Adresse complète du lieu"
+              placeholderTextColor={colors.textSecondary}
+              multiline
+              returnKeyType="next"
+            />
+
+            <Text style={commonStyles.inputLabel}>Description de l&apos;événement</Text>
+            <TextInput
+              style={[commonStyles.input, { marginBottom: 16, height: 80, textAlignVertical: 'top' }]}
+              value={eventDescription}
+              onChangeText={setEventDescription}
+              placeholder="Type d'événement, nombre d'invités, ambiance souhaitée..."
+              placeholderTextColor={colors.textSecondary}
+              multiline
+              returnKeyType="done"
+            />
+          </View>
+
+          {/* Availability Check */}
+          <View style={[commonStyles.card, { 
+            marginBottom: 20, 
+            backgroundColor: checkAvailability() ? '#F0FDF4' : '#FEF2F2',
+            borderColor: checkAvailability() ? colors.success : colors.error,
+            borderWidth: 1
+          }]}>
+            <Text style={[commonStyles.text, { fontWeight: '600', marginBottom: 8 }]}>
+              Disponibilité
+            </Text>
+            <Text style={[commonStyles.text, { color: checkAvailability() ? colors.success : colors.error }]}>
+              {checkAvailability() 
+                ? `✓ ${artist.name} est disponible le ${formatDate(eventDate)}`
+                : `✗ ${artist.name} n'est pas disponible le ${formatDate(eventDate)}`
+              }
+            </Text>
+          </View>
+
+          {/* Summary Card */}
+          <View style={[commonStyles.card, { marginBottom: 20, backgroundColor: colors.backgroundAlt }]}>
+            <Text style={[commonStyles.text, { fontWeight: '600', marginBottom: 8 }]}>
+              Résumé de votre demande
+            </Text>
+            <Text style={[commonStyles.textSecondary, { marginBottom: 4 }]}>
+              Artiste: {artist.name}
+            </Text>
+            <Text style={[commonStyles.textSecondary, { marginBottom: 4 }]}>
+              Date: {formatDate(eventDate)} à {formatTime(eventTime)}
+            </Text>
+            <Text style={[commonStyles.textSecondary, { marginBottom: 4 }]}>
+              Lieu: {eventLocation || 'À renseigner'}
+            </Text>
+            <Text style={[commonStyles.textSecondary, { marginBottom: 4 }]}>
+              Contact: {clientName || 'À renseigner'} - {clientEmail || 'À renseigner'}
+            </Text>
+            <Text style={[commonStyles.text, { fontWeight: '600', color: colors.primary, marginTop: 8 }]}>
+              Prix: {artist.price}€
+            </Text>
+          </View>
+
+          {/* Action Buttons */}
           <TouchableOpacity
-            style={[commonStyles.input, { marginBottom: 16, justifyContent: 'center' }]}
-            onPress={() => setShowDatePicker(true)}
+            style={[buttonStyles.primary, { marginBottom: 12, paddingVertical: 16 }]}
+            onPress={handleSubmitBooking}
           >
-            <Text style={{ color: colors.text, fontSize: 16 }}>
-              {formatDate(eventDate)}
+            <Text style={{ color: 'white', fontSize: 16, fontWeight: '700' }}>
+              Envoyer la demande
             </Text>
           </TouchableOpacity>
 
-          <Text style={commonStyles.inputLabel}>Heure de début *</Text>
           <TouchableOpacity
-            style={[commonStyles.input, { marginBottom: 16, justifyContent: 'center' }]}
-            onPress={() => setShowTimePicker(true)}
+            style={[buttonStyles.secondary]}
+            onPress={onClose}
           >
-            <Text style={{ color: colors.text, fontSize: 16 }}>
-              {formatTime(eventTime)}
+            <Text style={{ color: colors.text, fontSize: 16, fontWeight: '600' }}>
+              Annuler
             </Text>
           </TouchableOpacity>
 
-          <Text style={commonStyles.inputLabel}>Lieu de l&apos;événement *</Text>
-          <TextInput
-            style={[commonStyles.input, { marginBottom: 16 }]}
-            value={eventLocation}
-            onChangeText={setEventLocation}
-            placeholder="Adresse complète du lieu"
-            placeholderTextColor={colors.textSecondary}
-            multiline
-          />
+          {/* Date/Time Pickers */}
+          {showDatePicker && (
+            <DateTimePicker
+              value={eventDate}
+              mode="date"
+              display="default"
+              onChange={onDateChange}
+              minimumDate={new Date()}
+            />
+          )}
 
-          <Text style={commonStyles.inputLabel}>Description de l&apos;événement</Text>
-          <TextInput
-            style={[commonStyles.input, { marginBottom: 16, height: 80, textAlignVertical: 'top' }]}
-            value={eventDescription}
-            onChangeText={setEventDescription}
-            placeholder="Type d'événement, nombre d'invités, ambiance souhaitée..."
-            placeholderTextColor={colors.textSecondary}
-            multiline
-          />
+          {showTimePicker && (
+            <DateTimePicker
+              value={eventTime}
+              mode="time"
+              display="default"
+              onChange={onTimeChange}
+            />
+          )}
         </View>
-
-        {/* Availability Check */}
-        <View style={[commonStyles.card, { marginBottom: 20, backgroundColor: checkAvailability() ? colors.backgroundAlt : '#FEF2F2' }]}>
-          <Text style={[commonStyles.text, { fontWeight: '600', marginBottom: 8 }]}>
-            Disponibilité
-          </Text>
-          <Text style={[commonStyles.text, { color: checkAvailability() ? colors.success : colors.error }]}>
-            {checkAvailability() 
-              ? `✓ ${artist.name} est disponible le ${formatDate(eventDate)}`
-              : `✗ ${artist.name} n'est pas disponible le ${formatDate(eventDate)}`
-            }
-          </Text>
-        </View>
-
-        {/* Action Buttons */}
-        <TouchableOpacity
-          style={[buttonStyles.primary, { marginBottom: 12, paddingVertical: 16 }]}
-          onPress={handleSubmitBooking}
-        >
-          <Text style={{ color: 'white', fontSize: 16, fontWeight: '700' }}>
-            Envoyer la demande
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[buttonStyles.secondary]}
-          onPress={onClose}
-        >
-          <Text style={{ color: colors.text, fontSize: 16, fontWeight: '600' }}>
-            Annuler
-          </Text>
-        </TouchableOpacity>
-
-        {/* Date/Time Pickers */}
-        {showDatePicker && (
-          <DateTimePicker
-            value={eventDate}
-            mode="date"
-            display="default"
-            onChange={onDateChange}
-            minimumDate={new Date()}
-          />
-        )}
-
-        {showTimePicker && (
-          <DateTimePicker
-            value={eventTime}
-            mode="time"
-            display="default"
-            onChange={onTimeChange}
-          />
-        )}
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

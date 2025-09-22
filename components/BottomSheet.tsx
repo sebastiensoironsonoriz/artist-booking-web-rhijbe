@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -22,8 +23,8 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // Snap positions for the bottom sheet
 const SNAP_POINTS = {
-  HALF: SCREEN_HEIGHT * 0.5,
-  FULL: SCREEN_HEIGHT * 0.8,
+  HALF: SCREEN_HEIGHT * 0.6,
+  FULL: SCREEN_HEIGHT * 0.9,
   CLOSED: SCREEN_HEIGHT,
 };
 
@@ -35,17 +36,17 @@ const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const gestureTranslateY = useRef(new Animated.Value(0)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
-  const [currentSnapPoint, setCurrentSnapPoint] = useState(SNAP_POINTS.HALF);
+  const [currentSnapPoint, setCurrentSnapPoint] = useState(SNAP_POINTS.FULL);
   const lastGestureY = useRef(0);
   const startPositionY = useRef(0);
 
   useEffect(() => {
     if (isVisible) {
-      setCurrentSnapPoint(SNAP_POINTS.HALF);
+      setCurrentSnapPoint(SNAP_POINTS.FULL);
       gestureTranslateY.setValue(0);
       Animated.parallel([
         Animated.timing(translateY, {
-          toValue: SCREEN_HEIGHT - SNAP_POINTS.HALF,
+          toValue: SCREEN_HEIGHT - SNAP_POINTS.FULL,
           duration: 300,
           useNativeDriver: true,
         }),
@@ -241,12 +242,12 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    padding: 16,
   },
   defaultContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 16,
   },
   title: {
     fontSize: 24,
