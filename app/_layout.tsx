@@ -52,7 +52,10 @@ export default function RootLayout() {
               headerShown: false,
               animation: 'default',
             }}
-          />
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="artist/[id]" />
+          </Stack>
         </GestureHandlerRootView>
     </SafeAreaProvider>
   );
